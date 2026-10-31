@@ -71,8 +71,8 @@ jobs:
                 } }), createWriteStream(file));
                 if (size !== item.size || hash.digest('hex') !== item.sha256) throw new Error('Integrity check failed');
                 const uploaded = await fetch(`${uploadUrl}?name=${item.name}`, { method: 'POST', redirect: 'error',
-                  headers: { ...headers, 'Content-Type': 'application/octet-stream' }, body: createReadStream(file), duplex: 'half', signal: AbortSignal.timeout(300000) });
-                if (!uploaded.ok) throw new Error('Upload failed');
+                  headers: { ...headers, 'Content-Type': 'application/octet-stream', 'Content-Length': String(item.size) }, body: createReadStream(file), duplex: 'half', signal: AbortSignal.timeout(300000) });
+                if (!uploaded.ok) throw new Error(`Upload failed (${uploaded.status})`);
                 const asset = await uploaded.json();
                 if (asset.size !== item.size || asset.digest !== `sha256:${item.sha256}`) throw new Error('Upload integrity check failed');
                 await rm(file);
