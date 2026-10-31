@@ -56,7 +56,7 @@ jobs:
                   completed++; continue;
                 }
                 if (old) {
-                  if (old.state !== 'starter' || old.size !== 0) throw new Error('Unexpected asset state');
+                  if (old.state !== 'starter' || old.digest || ![0, item.size].includes(old.size)) throw new Error('Unexpected asset state');
                   await api(`releases/assets/${old.id}`, { method: 'DELETE' });
                 }
                 const file = path.join(temporary, item.name);
